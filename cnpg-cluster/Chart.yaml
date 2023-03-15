@@ -1,0 +1,6 @@
+apiVersion: v2
+name: cnpg-cluster
+description: A Helm chart to deploy a CNPG Cluster
+type: application
+version: 0.1.0
+appVersion: "latest"

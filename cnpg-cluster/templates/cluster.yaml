@@ -1,0 +1,18 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: {{ include "cnpg-cluster.fullname" . }}
+  labels:
+    {{- include "cnpg-cluster.labels" . | nindent 4 }}
+spec:
+  instances: 1
+  storage:
+    size: 1Gi
+  superuserSecret:
+    name: cluster-{{ include "cnpg-cluster.fullname" . }}-superuser
+  bootstrap:
+    initdb:
+      database: app
+      owner: app
+      secret:
+        name: cluster-{{ include "cnpg-cluster.fullname" . }}-app-user
