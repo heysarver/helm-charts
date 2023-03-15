@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "cnpg-cluster.labels" . | nindent 4 }}
 spec:
-  instances: 1
+  instances: {{ .Values.instances }}
   storage:
     size: 1Gi
   superuserSecret:
