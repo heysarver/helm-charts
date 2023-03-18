@@ -1,0 +1,56 @@
+
+elasticsearch:
+  version: 8.5.0
+  http:
+    tls:
+      selfSignedCertificate:
+        disabled: true
+  nodeSets:
+    - name: default
+      count: 2
+      config:
+        node.store.allow_mmap: false
+      podTemplate:
+        spec:
+          containers:
+          - name: elasticsearch
+            resources:
+              requests:
+                cpu: 1
+              limits:
+                memory: 1.5Gi
+
+kibana:
+  version: 8.5.0
+  ingress:
+    enabled: true
+    className: "traefik"
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod-traefik
+    hosts:
+      - host: kibana.unstable.sudoint.net
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls:
+      - secretName: kibana-default-tls
+        hosts:
+          - kibana.unstable.sudoint.net
+  spec:
+    count: 1
+    elasticsearchRef:
+      name: elasticsearch
+    config:
+      server.publicBaseUrl: https://kibana.unstable.sudoint.net
+    http:
+      tls:
+        selfSignedCertificate:
+          disabled: true
+
+fluentd-elasticsearch:
+  elasticsearch:
+    hosts: ["elasticsearch-es-http:9200"]
+    auth:
+      user: elastic
+      password: FAR43Bq7g2UYRR808wE0I4k1
+      enabled: true

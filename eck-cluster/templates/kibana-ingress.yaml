@@ -1,0 +1,59 @@
+{{- if .Values.kibana.ingress.enabled -}}
+{{- $fullName := "kibana" -}}
+{{- $svcPort := 5601 -}}
+{{- if and .Values.kibana.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
+  {{- if not (hasKey .Values.kibana.ingress.annotations "kubernetes.io/ingress.class") }}
+  {{- $_ := set .Values.kibana.ingress.annotations "kubernetes.io/ingress.class" .Values.kibana.ingress.className}}
+  {{- end }}
+{{- end }}
+{{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1
+{{- else if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1beta1
+{{- else -}}
+apiVersion: extensions/v1beta1
+{{- end }}
+kind: Ingress
+metadata:
+  name: kibana
+  labels:
+    elastic-cluster: default
+  {{- with .Values.kibana.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.kibana.ingress.className }}
+  {{- if .Values.kibana.ingress.tls }}
+  tls:
+    {{- range .Values.kibana.ingress.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
+  {{- end }}
+  rules:
+    {{- range .Values.kibana.ingress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          {{- range .paths }}
+          - path: {{ .path }}
+            {{- if and .pathType (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion) }}
+            pathType: {{ .pathType }}
+            {{- end }}
+            backend:
+              {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
+              service:
+                name: kibana-kb-http
+                port:
+                  number: {{ $svcPort }}
+              {{- else }}
+              serviceName: kibana-kb-http
+              servicePort: {{ $svcPort }}
+              {{- end }}
+          {{- end }}
+    {{- end }}
+{{- end }}

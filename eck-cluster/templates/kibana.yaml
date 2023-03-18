@@ -1,0 +1,14 @@
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: kibana
+  labels:
+    eck-cluster: default
+  annotations:
+    eck.k8s.elastic.co/license: basic
+    {{- if .Values.kibana.annotations }}
+    {{- toYaml .Values.kibana.annotations | nindent 4 }}
+    {{- end }}
+spec:
+  version: {{ required "A Kibana version is required" .Values.kibana.version }}
+  {{- toYaml .Values.kibana.spec | nindent 2 }}

@@ -1,0 +1,6 @@
+dependencies:
+- name: fluentd-elasticsearch
+  repository: https://kokuwaio.github.io/helm-charts
+  version: 13.9.0
+digest: sha256:4a7e366305bb7b2cc7d23ff10b809c06645928ff9bbe3b4cd6630519912d61ac
+generated: "2023-03-17T23:01:18.566591-04:00"
