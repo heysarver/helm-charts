@@ -16,3 +16,14 @@ spec:
       owner: app
       secret:
         name: cluster-{{ include "cnpg-cluster.fullname" . }}-app-user
+  backup:
+  barmanObjectStore:
+    destinationPath: "postgres/{{ include "cnpg-cluster.fullname" . }}"
+    endpointURL: sarvent-backups.nyc3.digitaloceanspaces.com
+    s3Credentials:
+      accessKeyId:
+        name: cluster-{{ include "cnpg-cluster.fullname" . }}-s3
+        key: ACCESS_KEY_ID
+      secretAccessKey:
+        name: cluster-{{ include "cnpg-cluster.fullname" . }}-s3
+        key: ACCESS_SECRET_KEY
