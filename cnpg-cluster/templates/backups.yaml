@@ -4,6 +4,7 @@ metadata:
   name: backup-{{ include "cnpg-cluster.fullname" . }}-daily
 spec:
   schedule: "0 0 0 * * *"
+  immediate: true
   backupOwnerReference: self
   cluster:
     name: {{ include "cnpg-cluster.fullname" . }}
