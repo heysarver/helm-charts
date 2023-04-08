@@ -1,0 +1,9 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: backup-{{ include "cnpg-cluster.fullname" . }}-daily
+spec:
+  schedule: "0 0 0 * * *"
+  backupOwnerReference: self
+  cluster:
+    name: {{ include "cnpg-cluster.fullname" . }}
